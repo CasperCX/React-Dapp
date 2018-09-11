@@ -9,6 +9,7 @@ const initialState = {
 export function providerReducer(state = initialState, action) {
     switch(action.type) {
         case TEST:
+        console.log("test called");
             return Object.assign({}, state, {
                 test: action.payload
             })

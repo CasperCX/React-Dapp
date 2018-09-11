@@ -23822,6 +23822,7 @@ function providerReducer() {
 
     switch (action.type) {
         case _types.TEST:
+            console.log("test called");
             return Object.assign({}, state, {
                 test: action.payload
             });
@@ -23851,7 +23852,145 @@ var rootReducer = (0, _redux.combineReducers)({
 });
 
 exports.default = rootReducer;
-},{"redux":"node_modules\\redux\\es\\redux.js","./reducer-provider":"src\\core\\reducers\\reducer-provider.js"}],"src\\containers\\App.js":[function(require,module,exports) {
+},{"redux":"node_modules\\redux\\es\\redux.js","./reducer-provider":"src\\core\\reducers\\reducer-provider.js"}],"src\\core\\store\\configureStore.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = configureStore;
+
+var _redux = require('redux');
+
+var _reduxThunk = require('redux-thunk');
+
+var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
+
+var _reducers = require('../reducers');
+
+var _reducers2 = _interopRequireDefault(_reducers);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function configureStore(initialState) {
+    return (0, _redux.createStore)(_reducers2.default, initialState, (0, _redux.applyMiddleware)(_reduxThunk2.default));
+}
+},{"redux":"node_modules\\redux\\es\\redux.js","redux-thunk":"node_modules\\redux-thunk\\es\\index.js","../reducers":"src\\core\\reducers\\index.js"}],"src\\core\\actions\\actions-provider.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.setProvider = setProvider;
+exports.Test = Test;
+
+var _types = require('../types');
+
+function setProvider(provider) {
+    return function (dispatch) {
+        provider.eth.getAccounts(function (error, accounts) {
+            if (error) {
+                return;
+            }
+
+            var userAccount = accounts[0];
+
+            provider.eth.defaultAccount = userAccount;
+
+            dispatch(function () {
+                return {
+                    type: _types.SET_PROVIDER,
+                    provider: provider
+                };
+            }());
+        });
+    };
+};
+
+function Test(string) {
+    return function (dispatch) {
+
+        dispatch(function () {
+            return {
+                type: _types.TEST,
+                payload: string
+            };
+        }());
+    };
+}
+},{"../types":"src\\core\\types.js"}],"src\\containers\\App.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRedux = require('react-redux');
+
+var _redux = require('redux');
+
+var _actionsProvider = require('../core/actions/actions-provider');
+
+var providerActionCreators = _interopRequireWildcard(_actionsProvider);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var App = function (_Component) {
+  _inherits(App, _Component);
+
+  function App() {
+    _classCallCheck(this, App);
+
+    return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
+  }
+
+  _createClass(App, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      var actions = this.props.actions;
+
+      actions.provider.Test("hello world");
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'div',
+        null,
+        'Hello from app'
+      );
+    }
+  }]);
+
+  return App;
+}(_react.Component);
+
+;
+
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: {
+      provider: (0, _redux.bindActionCreators)(providerActionCreators, dispatch)
+    }
+  };
+};
+
+exports.default = (0, _reactRedux.connect)(null, mapDispatchToProps)(App);
+},{"react":"node_modules\\react\\index.js","react-redux":"node_modules\\react-redux\\es\\index.js","redux":"node_modules\\redux\\es\\redux.js","../core/actions/actions-provider":"src\\core\\actions\\actions-provider.js"}],"src\\containers\\Root.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -23868,13 +24007,19 @@ var _reactRedux = require('react-redux');
 
 var _redux = require('redux');
 
-var _reduxThunk = require('redux-thunk');
+var _configureStore = require('../core/store/configureStore');
 
-var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
+var _configureStore2 = _interopRequireDefault(_configureStore);
 
-var _reducers = require('../core/reducers');
+var _actionsProvider = require('../core/actions/actions-provider');
 
-var _reducers2 = _interopRequireDefault(_reducers);
+var providerActionCreators = _interopRequireWildcard(_actionsProvider);
+
+var _App = require('./App');
+
+var _App2 = _interopRequireDefault(_App);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -23884,24 +24029,23 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 // import Web3 from 'web3';
+// import { createStore, applyMiddleware } from 'redux';
+// import thunk from 'redux-thunk';
+// import rootReducer from '../core/reducers';
 
 
-// import configureStore from '../core/store/configureStore';
-// import * as providerActionCreators from '../core/actions/actions-provider';
+var store = (0, _configureStore2.default)();
 
-// const store = configureStore();
-var store = (0, _redux.createStore)(_reducers2.default, (0, _redux.applyMiddleware)(_reduxThunk2.default));
+var Root = function (_Component) {
+    _inherits(Root, _Component);
 
-var App = function (_Component) {
-    _inherits(App, _Component);
+    function Root() {
+        _classCallCheck(this, Root);
 
-    function App() {
-        _classCallCheck(this, App);
-
-        return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
+        return _possibleConstructorReturn(this, (Root.__proto__ || Object.getPrototypeOf(Root)).apply(this, arguments));
     }
 
-    _createClass(App, [{
+    _createClass(Root, [{
         key: 'componentDidMount',
         value: function componentDidMount() {}
         // const { actions } = this.props;
@@ -23929,34 +24073,18 @@ var App = function (_Component) {
         key: 'render',
         value: function render() {
             return _react2.default.createElement(
-                'div',
-                null,
-                'Hello WORLD',
-                _react2.default.createElement(
-                    'p',
-                    null,
-                    'This is my new react app'
-                )
+                _reactRedux.Provider,
+                { store: store },
+                _react2.default.createElement(_App2.default, null)
             );
         }
     }]);
 
-    return App;
+    return Root;
 }(_react.Component);
 
-// function mapDispatchToProps(dispatch) {
-//     return {
-//         actions: {
-//             provider: bindActionCreators(providerActionCreators, dispatch)
-//         }
-//     }
-// };
-
-// export default connect(null, mapDispatchToProps)(App);
-
-
-exports.default = App;
-},{"react":"node_modules\\react\\index.js","react-redux":"node_modules\\react-redux\\es\\index.js","redux":"node_modules\\redux\\es\\redux.js","redux-thunk":"node_modules\\redux-thunk\\es\\index.js","../core/reducers":"src\\core\\reducers\\index.js"}],"index.js":[function(require,module,exports) {
+exports.default = Root;
+},{"react":"node_modules\\react\\index.js","react-redux":"node_modules\\react-redux\\es\\index.js","redux":"node_modules\\redux\\es\\redux.js","../core/store/configureStore":"src\\core\\store\\configureStore.js","../core/actions/actions-provider":"src\\core\\actions\\actions-provider.js","./App":"src\\containers\\App.js"}],"index.js":[function(require,module,exports) {
 'use strict';
 
 var _react = require('react');
@@ -23967,16 +24095,16 @@ var _reactDom = require('react-dom');
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _App = require('./src/containers/App');
+var _Root = require('./src/containers/Root');
 
-var _App2 = _interopRequireDefault(_App);
+var _Root2 = _interopRequireDefault(_Root);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-_reactDom2.default.render(_react2.default.createElement(_App2.default, null), document.getElementById('app'));
+_reactDom2.default.render(_react2.default.createElement(_Root2.default, null), document.getElementById('app'));
 
 // main app
-},{"react":"node_modules\\react\\index.js","react-dom":"node_modules\\react-dom\\index.js","./src/containers/App":"src\\containers\\App.js"}],"node_modules\\parcel-bundler\\src\\builtins\\hmr-runtime.js":[function(require,module,exports) {
+},{"react":"node_modules\\react\\index.js","react-dom":"node_modules\\react-dom\\index.js","./src/containers/Root":"src\\containers\\Root.js"}],"node_modules\\parcel-bundler\\src\\builtins\\hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 
