@@ -1,4 +1,4 @@
-import constants from '../types';
+import { SET_PROVIDER, TEST } from '../types';
 
 export function setProvider(provider) {
     return (dispatch) => {
@@ -11,7 +11,7 @@ export function setProvider(provider) {
 
             dispatch((() => {
                 return {
-                    type: constants.SET_PROVIDER,
+                    type: SET_PROVIDER,
                     provider: provider
                 }
             })())
@@ -25,7 +25,7 @@ export function Test(string) {
 
         dispatch((() => {
             return {
-                type: constants.TEST,
+                type: TEST,
                 payload: string
             }
         })())

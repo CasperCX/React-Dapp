@@ -7,14 +7,16 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "./node_modules/.bin/webpack-dev-server --config ./webpack/webpack.dev.config.js"
+    "dev": "parcel ./index.html",
+    "build": "parcel build ./index.html/"
   },
   "author": "Casper Groenenberg <c.groenenberg@hotmail.com>",
   "license": "ISC",
   "dependencies": {
     "@babel/core": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
+    "babel-preset-env": "^1.7.0",
+    "parcel-bundler": "^1.9.7",
     "react": "^16.5.0",
     "react-dom": "^16.5.0",
     "react-redux": "^5.0.7",
@@ -37,21 +39,5 @@
     "less": "^3.8.1",
     "less-loader": "^4.1.0",
     "style-loader": "^0.23.0"
-  },
-  "babel": {
-    "presets": [
-      [
-        "@babel/preset-react",
-        {
-          "modules": "commonjs",
-          "targets": {
-            "node": "current"
-          }
-        }
-      ]
-    ],
-    "plugins": [
-      "transform-object-rest-spread"
-    ]
   }
 }

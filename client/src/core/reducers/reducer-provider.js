@@ -1,4 +1,4 @@
-import constants from '../types';
+import { SET_PROVIDER, TEST } from '../types';
 
 
 const initialState = {
@@ -8,11 +8,11 @@ const initialState = {
 
 export function providerReducer(state = initialState, action) {
     switch(action.type) {
-        case constants.TEST:
+        case TEST:
             return Object.assign({}, state, {
                 test: action.payload
             })
-        case constants.SET_PROVIDER:
+        case SET_PROVIDER:
         console.log("string passed to reducer:", action.payload)
             return Object.assign({}, state, {
                 web3Provider: action.provider
