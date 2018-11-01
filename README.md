@@ -1,2 +1,2 @@
 # React-Dapp
-React project with on the Ethereum blockchain
+React project on the Ethereum blockchain
